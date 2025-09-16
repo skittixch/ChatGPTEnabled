@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Causal Blob System</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <script src="https://d3js.org/d3.v7.min.js" defer></script>
+    <script src="/static/js/app.js" defer></script>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div>
+          <h1>Causal Blob System</h1>
+          <p class="subtitle">Blend news flows and personal ideas into a living causal map.</p>
+        </div>
+        <div class="status" id="status-indicator">Disconnected</div>
+      </header>
+      <div class="layout">
+        <aside class="controls">
+          <section>
+            <h2>Views</h2>
+            <div class="view-options">
+              <label><input type="radio" name="view" value="blob" checked /> Blob map</label>
+              <label><input type="radio" name="view" value="inventory" /> Idea inventory</label>
+              <label><input type="radio" name="view" value="comparison" /> Comparative</label>
+              <label><input type="radio" name="view" value="worldview" /> Worldview geometry</label>
+            </div>
+          </section>
+          <section>
+            <h2>Ingest News</h2>
+            <form id="ingest-form">
+              <label>
+                Feed URL
+                <input type="url" name="feedUrl" placeholder="https://example.com/rss" />
+              </label>
+              <label>
+                Limit
+                <input type="number" name="limit" min="1" max="12" value="5" />
+              </label>
+              <button type="submit">Fetch stories</button>
+            </form>
+          </section>
+          <section>
+            <h2>Add Idea</h2>
+            <form id="idea-form">
+              <label>
+                Your name
+                <input type="text" name="userName" required />
+              </label>
+              <label>
+                Title
+                <input type="text" name="title" required />
+              </label>
+              <label>
+                Summary
+                <textarea name="summary" rows="3" required></textarea>
+              </label>
+              <label>
+                Tags (comma separated)
+                <input type="text" name="tags" placeholder="policy, finance" />
+              </label>
+              <div class="slider-group">
+                <label>Agreement <input type="range" name="agreement" min="0" max="1" step="0.05" value="0.8" /></label>
+                <span class="value" data-for="agreement">0.80</span>
+              </div>
+              <div class="slider-group">
+                <label>Confidence <input type="range" name="confidence" min="0" max="1" step="0.05" value="0.7" /></label>
+                <span class="value" data-for="confidence">0.70</span>
+              </div>
+              <label>
+                Stance
+                <select name="stance">
+                  <option value="support">Supports</option>
+                  <option value="contradict">Contradicts</option>
+                  <option value="neutral">Neutral</option>
+                </select>
+              </label>
+              <label>
+                Importance
+                <input type="range" name="importance" min="0" max="1" step="0.05" value="0.7" />
+              </label>
+              <label>
+                Link to existing node
+                <select name="linkTarget" id="link-target-select">
+                  <option value="">— none —</option>
+                </select>
+              </label>
+              <label>
+                Connection type
+                <select name="linkType">
+                  <option value="supports">Supports</option>
+                  <option value="contradicts">Contradicts</option>
+                  <option value="relates">Relates</option>
+                </select>
+              </label>
+              <label>
+                Connection strength
+                <input type="range" name="linkWeight" min="0" max="1" step="0.05" value="0.5" />
+              </label>
+              <button type="submit">Add idea</button>
+            </form>
+          </section>
+          <section>
+            <h2>Opinion Weighting</h2>
+            <form id="opinion-form">
+              <label>
+                User
+                <select name="userName" id="opinion-user-select"></select>
+              </label>
+              <label>
+                Target node
+                <select name="nodeId" id="opinion-node-select"></select>
+              </label>
+              <div class="slider-group">
+                <label>Agreement <input type="range" name="agreement" min="0" max="1" step="0.05" value="0.5" /></label>
+                <span class="value" data-for="opinion-agreement">0.50</span>
+              </div>
+              <div class="slider-group">
+                <label>Confidence <input type="range" name="confidence" min="0" max="1" step="0.05" value="0.5" /></label>
+                <span class="value" data-for="opinion-confidence">0.50</span>
+              </div>
+              <label>
+                Stance
+                <select name="stance">
+                  <option value="support">Supports</option>
+                  <option value="contradict">Contradicts</option>
+                  <option value="neutral">Neutral</option>
+                </select>
+              </label>
+              <label>
+                Weight
+                <input type="range" name="weight" min="0" max="1" step="0.05" value="0.5" />
+              </label>
+              <button type="submit">Save weighting</button>
+            </form>
+          </section>
+        </aside>
+        <main class="visualizations">
+          <section id="view-blob" class="view visible">
+            <h2>Blob view: causal landscape</h2>
+            <svg id="blob-svg" viewBox="0 0 900 600"></svg>
+          </section>
+          <section id="view-inventory" class="view">
+            <div class="view-header">
+              <h2>Idea inventory</h2>
+              <label>
+                User
+                <select id="inventory-user"></select>
+              </label>
+            </div>
+            <svg id="inventory-svg" viewBox="0 0 900 600"></svg>
+          </section>
+          <section id="view-comparison" class="view">
+            <div class="view-header">
+              <h2>Comparative view</h2>
+              <div class="comparison-selects">
+                <label>Left user
+                  <select id="comparison-left-user"></select>
+                </label>
+                <label>Right user
+                  <select id="comparison-right-user"></select>
+                </label>
+              </div>
+            </div>
+            <div class="comparison-panels">
+              <svg id="comparison-left" viewBox="0 0 420 600"></svg>
+              <svg id="comparison-right" viewBox="0 0 420 600"></svg>
+            </div>
+          </section>
+          <section id="view-worldview" class="view">
+            <div class="view-header">
+              <h2>Worldview geometry</h2>
+              <div class="dimension-controls">
+                <label>X axis
+                  <select id="dimension-x"></select>
+                </label>
+                <label>Y axis
+                  <select id="dimension-y"></select>
+                </label>
+              </div>
+            </div>
+            <svg id="worldview-svg" viewBox="0 0 900 600"></svg>
+            <div class="legend" id="worldview-legend"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+    <div id="tooltip" class="tooltip" hidden></div>
+  </body>
+</html>

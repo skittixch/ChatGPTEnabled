@@ -1,127 +1,133 @@
-# ChatGPTEnabled
+# Causal Blob System
 
-A practical starter repo for building **ChatGPT-assisted workflows, automations, and small apps**. It’s designed to be copy-paste friendly, Windows-friendly, and easy to grow from a single script into a real project.
+An interactive causal web visualization that blends live news ingestion with personal idea inventories. The interface renders "blobs"—nodes that represent causal hypotheses, news stories, or personal reflections—inside a dynamic force-directed map. Users can add their own beliefs, weight how strongly they agree with a story, compare worldviews, and explore dimensional reductions of their causal space.
 
-<p align="center">
-  <img alt="ChatGPTEnabled banner" src="https://placehold.co/1200x260?text=ChatGPTEnabled" />
-</p>
+![Causal Blob System banner](https://placehold.co/1200x260?text=Causal+Blob+System)
 
 ---
 
-## What is this?
+## Feature Highlights
 
-**ChatGPTEnabled** is a scaffold + docs pattern to help you:
-- Capture repeatable prompts and “how-tos” next to code.
-- Script local helpers (Windows PowerShell / Python) that call APIs or tools.
-- Keep notes, roadmaps, and decisions versioned inside the repo.
+### MVP 1 – Static causal blobs
+- Minimalist 2D visualization using D3 with thin black outlines and white fill.
+- Hover tooltips surface summaries, tags, and existing opinions.
+- Initial data seeded from `app/data/initial_state.json`.
 
-If you just want a place where ChatGPT can say “put this file here” and you can copy/paste and commit—this is it.
+### MVP 2 – Dynamic ingestion & authoring
+- RSS/Atom ingest (default feeds from NYTimes, BBC, Al Jazeera or provide your own).
+- News items are normalized into causal blobs with heuristically generated tags and links to similar nodes.
+- Idea form allows anyone to add opinions, stance, and causal links into the graph in real time.
+
+### MVP 3 – Opinion weighting & comparison
+- Sliders capture agreement, confidence, stance, and weighting for any blob.
+- Comparative view renders side-by-side personal causal maps for two users.
+- All user submissions persist to `app/data/runtime_state.json` so state survives restarts.
+
+### MVP 4 – Worldview geometry
+- The system derives feature vectors per user (agreement, contradiction ratio, diversity, etc.).
+- Custom PCA implementation projects users into a multi-dimensional ideological space.
+- Interactive controls switch axes to explore different worldview cross-sections.
+
+### Bonus waypoints
+- Opinion-aware heuristics create causal links during ingestion based on shared tags.
+- Tooltips and legends convey why nodes are important and how users relate to them.
+- Programmatic API for automations or agent-driven analysis.
 
 ---
 
-## Quick Start (Windows-friendly)
+## Architecture
 
-### 1) Create the repo (if you haven’t yet)
+| Layer | Key Pieces |
+| ----- | ---------- |
+| **Frontend** | `frontend/index.html`, `frontend/css/styles.css`, `frontend/js/app.js` – static assets served by FastAPI. Uses D3.js for force layouts and worldview geometry. |
+| **Backend** | FastAPI app (`app/main.py`) orchestrates state, ingestion, and analysis services. |
+| **State** | `StateManager` reads/writes JSON to `app/data/runtime_state.json` with seed data in `app/data/initial_state.json`. |
+| **Ingestion** | `app/services/ingestion.py` normalizes RSS feeds into nodes and generates causal links. |
+| **Analysis** | `app/services/worldview.py` computes user feature vectors and applies PCA-style dimensional reduction using NumPy. |
+| **Tests** | `pytest` suite validating idea creation, feed ingestion, and worldview projection (`app/tests/`). |
 
-**Command Prompt / PowerShell**
-```bat
-mkdir ChatGPTEnabled && cd ChatGPTEnabled
-git init
+The backend serves `/` (the visualization) and `/static/*` assets. API routes power ingestion, ideas, opinions, comparisons, and worldview analytics.
+
+---
+
+## Getting Started
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Start the API + static server
+uvicorn app.main:app --reload --port 8000
 ```
 
-### 2) Add this README
+Open <http://localhost:8000> to explore the blob map.
 
-- Create a new file named `README.md` and paste the contents of this document.
-- Then:
-```bat
-git add README.md
-git commit -m "chore: add initial README for ChatGPTEnabled"
-```
-
-*(If you want this on GitHub: create a new empty repo named `ChatGPTEnabled` and then run `git remote add origin https://github.com/<YOU>/ChatGPTEnabled.git` followed by `git push -u origin main`.)*
+### Local development tips
+- The UI updates immediately after adding ideas or opinions; simply refresh to reload persisted state.
+- Runtime state is stored in `app/data/runtime_state.json`. Delete it to revert to the seeded baseline.
+- Use the ingest form to pull from a custom RSS/Atom URL. Leave the field empty to fetch from the default feed rotation.
 
 ---
 
-## Suggested Structure (grow as you go)
+## Core API Endpoints
 
-You don’t need to create these yet—this is the north star for where things will live.
+| Method & Path | Description |
+| ------------- | ----------- |
+| `GET /api/state` | Current nodes, links, and registered users. |
+| `GET /api/users` | Convenience list of users and display metadata. |
+| `POST /api/ideas` | Add a new idea blob with stance, weights, and optional causal link. |
+| `POST /api/opinions` | Attach or update a user’s weighting on any blob. |
+| `POST /api/ingest` | Fetch news stories (`feed_url` optional, defaults rotate across curated climate/policy feeds). |
+| `GET /api/comparison?user_ids=alex-analyst,sam-strategist` | Subgraphs for specific users. |
+| `GET /api/worldview` | Dimensional reduction + feature vectors used by the worldview view. |
+| `GET /health` | Liveness probe. |
+
+All endpoints return JSON payloads and are suitable for automation or further integration.
+
+---
+
+## Testing
+
+```bash
+pytest
+```
+
+The suite covers idea creation flow, RSS ingestion heuristics, and worldview projections. Warnings from third-party libraries (e.g., `feedparser` using `cgi`) are expected.
+
+---
+
+## Directory Guide
 
 ```
 ChatGPTEnabled/
-├─ README.md
-├─ /docs/                 # Decisions, design notes, playbooks, handover.md
-│  ├─ ROADMAP.md
-│  └─ HANDOVER.md
-├─ /prompts/              # Prompt templates & usage notes
-│  └─ example.prompt.md
-├─ /scripts/              # Local helper scripts (PowerShell & Python)
-│  ├─ windows/            # Windows-first scripts
-│  │  └─ bootstrap.ps1
-│  └─ python/
-│     └─ example.py
-├─ /config/               # .env.example, settings.json, etc.
-│  └─ .env.example
-└─ /data/                 # Scratch data, exported logs (gitignore-heavy)
+├─ app/
+│  ├─ main.py               # FastAPI app & routes
+│  ├─ models.py             # Pydantic models & request schemas
+│  ├─ services/
+│  │  ├─ ingestion.py       # RSS/Atom ingestion helpers
+│  │  ├─ state_manager.py   # JSON-backed state persistence
+│  │  └─ worldview.py       # Feature extraction & PCA projection
+│  ├─ data/
+│  │  └─ initial_state.json # Seed nodes, links, and users
+│  └─ tests/
+│     ├─ sample_feed.xml    # Deterministic feed for tests
+│     └─ test_services.py   # pytest coverage of core flows
+├─ frontend/
+│  ├─ index.html            # Single-page UI
+│  ├─ css/styles.css        # Minimalist blob design
+│  └─ js/app.js             # D3 rendering + UI logic
+├─ requirements.txt         # Python dependencies
+├─ README.md                # This documentation
+└─ .gitignore
 ```
 
 ---
 
-## Conventions
+## Roadmap Ideas
 
-- **Windows-first**: Wherever possible, include **PowerShell** instructions. Bash is optional.
-- **Whole files over diffs**: When making changes via ChatGPT, prefer full file drops so you can copy/paste directly.
-- **One-file commits**: Early on, favor small commits with clear messages.
+- Integrate clustering/shape detection to highlight worldview "bubbles".
+- Add per-user export/import of blob inventories for collaboration.
+- Expand ingestion to include forums or archived discussions and auto-link references.
+- Introduce agent-based simulation that tests alternative causal chains inside the blobspace.
 
----
-
-## What to ask ChatGPT next
-
-1. **Create a `docs/ROADMAP.md`** with a 30/60/90-day outline for this repo.
-2. **Add a `/prompts/example.prompt.md`** that shows how to structure reusable prompts.
-3. **Drop a PowerShell bootstrap** in `/scripts/windows/bootstrap.ps1` to set up a Python venv and install dependencies from `requirements.txt`.
-4. **Add `.gitignore` and `.gitattributes`** tailored for Windows + Python.
-5. **Create `/config/.env.example`** and explain what secrets will eventually live there.
-
----
-
-## License
-
-You choose! Common options:
-- **MIT** – very permissive.
-- **Apache-2.0** – permissive with patent protection.
-- **Unlicense** – public domain style.
-
-> If you’re unsure, MIT is usually fine. Ask ChatGPT to generate `LICENSE` text.
-
----
-
-## Changelog
-
-- **v0.0.1** – Initial README scaffold.
-
----
-
-### Optional: one-shot file creation
-
-If you’d like to create `README.md` from the terminal without opening an editor:
-
-**PowerShell (recommended on Windows)**
-```powershell
-@"
-# ChatGPTEnabled
-
-A practical starter repo for building **ChatGPT-assisted workflows, automations, and small apps**. It’s designed to be copy-paste friendly, Windows-friendly, and easy to grow from a single script into a real project.
-
-<p align="center">
-  <img alt="ChatGPTEnabled banner" src="https://placehold.co/1200x260?text=ChatGPTEnabled" />
-</p>
-
---- (snip) ---  <-- Replace this whole block with the full README content above
-"@ | Set-Content -Encoding UTF8 README.md
-```
-
-After saving:
-```bat
-git add README.md
-git commit -m "chore: initial README"
-```
+Contributions and experiments are welcome—fork, extend, and keep iterating on the causal landscape.
