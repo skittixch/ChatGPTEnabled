@@ -1,0 +1,196 @@
+{
+  "users": [
+    {
+      "id": "alex-analyst",
+      "name": "Alex Analyst",
+      "color": "#c23531",
+      "description": "Researcher focusing on climate mitigation",
+      "created_at": "2024-01-04T00:00:00"
+    },
+    {
+      "id": "sam-strategist",
+      "name": "Sam Strategist",
+      "color": "#2f4554",
+      "description": "Policy strategist exploring energy transitions",
+      "created_at": "2024-01-04T00:00:00"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "news-ipcc-warning",
+      "title": "IPCC report warns of accelerating climate feedbacks",
+      "summary": "The latest IPCC synthesis highlights faster-than-expected cascading feedback loops and calls for urgent policy response.",
+      "type": "news",
+      "source": "UN IPCC",
+      "created_at": "2024-01-08T12:00:00",
+      "tags": ["climate", "policy", "feedback-loops"],
+      "importance": 0.92,
+      "creator_user_id": null,
+      "url": "https://example.com/ipcc-report",
+      "opinions": [
+        {
+          "user_id": "alex-analyst",
+          "agreement": 0.88,
+          "confidence": 0.95,
+          "stance": "support",
+          "weight": 0.9
+        },
+        {
+          "user_id": "sam-strategist",
+          "agreement": 0.66,
+          "confidence": 0.7,
+          "stance": "support",
+          "weight": 0.7
+        }
+      ],
+      "metadata": {
+        "region": "global"
+      }
+    },
+    {
+      "id": "news-storage-breakthrough",
+      "title": "Long-duration energy storage costs fall 30%",
+      "summary": "A new chemistry for grid batteries reduces costs and extends discharge duration, enabling deeper renewable integration.",
+      "type": "news",
+      "source": "Energy Journal",
+      "created_at": "2024-01-10T10:00:00",
+      "tags": ["energy", "storage", "innovation"],
+      "importance": 0.81,
+      "creator_user_id": null,
+      "url": "https://example.com/storage-breakthrough",
+      "opinions": [
+        {
+          "user_id": "alex-analyst",
+          "agreement": 0.73,
+          "confidence": 0.6,
+          "stance": "support",
+          "weight": 0.6
+        },
+        {
+          "user_id": "sam-strategist",
+          "agreement": 0.84,
+          "confidence": 0.83,
+          "stance": "support",
+          "weight": 0.85
+        }
+      ],
+      "metadata": {
+        "region": "north-america"
+      }
+    },
+    {
+      "id": "idea-carbon-dividend",
+      "title": "Carbon dividend policy accelerates clean adoption",
+      "summary": "Returning carbon pricing revenue to households builds political durability and shifts consumer spending toward low-carbon solutions.",
+      "type": "idea",
+      "source": "Alex Analyst",
+      "created_at": "2024-01-11T09:00:00",
+      "tags": ["policy", "carbon-pricing", "equity"],
+      "importance": 0.87,
+      "creator_user_id": "alex-analyst",
+      "opinions": [
+        {
+          "user_id": "alex-analyst",
+          "agreement": 0.94,
+          "confidence": 0.82,
+          "stance": "support",
+          "weight": 1.0
+        }
+      ],
+      "metadata": {
+        "category": "policy"
+      }
+    },
+    {
+      "id": "idea-resilient-grids",
+      "title": "Investing in resilient microgrids protects vulnerable regions",
+      "summary": "Targeted microgrid investments in coastal communities reduce outage risk and create distributed resilience hubs.",
+      "type": "idea",
+      "source": "Sam Strategist",
+      "created_at": "2024-01-12T11:00:00",
+      "tags": ["resilience", "energy", "infrastructure"],
+      "importance": 0.83,
+      "creator_user_id": "sam-strategist",
+      "opinions": [
+        {
+          "user_id": "sam-strategist",
+          "agreement": 0.91,
+          "confidence": 0.88,
+          "stance": "support",
+          "weight": 1.0
+        }
+      ],
+      "metadata": {
+        "category": "infrastructure"
+      }
+    },
+    {
+      "id": "analysis-civic-engagement",
+      "title": "Civic engagement campaigns counter misinformation",
+      "summary": "Local storytelling networks help residents connect climate impacts with solutions, shifting community norms.",
+      "type": "analysis",
+      "source": "Systems Lab",
+      "created_at": "2024-01-09T15:30:00",
+      "tags": ["communication", "behavior-change", "climate"],
+      "importance": 0.75,
+      "creator_user_id": null,
+      "opinions": [
+        {
+          "user_id": "alex-analyst",
+          "agreement": 0.62,
+          "confidence": 0.55,
+          "stance": "support",
+          "weight": 0.6
+        },
+        {
+          "user_id": "sam-strategist",
+          "agreement": 0.48,
+          "confidence": 0.52,
+          "stance": "neutral",
+          "weight": 0.4
+        }
+      ],
+      "metadata": {
+        "category": "social"
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "link1",
+      "source": "news-ipcc-warning",
+      "target": "idea-carbon-dividend",
+      "relationship": "supports",
+      "weight": 0.72,
+      "description": "The IPCC report underpins the urgency for policy-based carbon incentives.",
+      "user_id": "alex-analyst"
+    },
+    {
+      "id": "link2",
+      "source": "news-storage-breakthrough",
+      "target": "idea-resilient-grids",
+      "relationship": "supports",
+      "weight": 0.68,
+      "description": "Cheaper storage makes microgrids more viable for resilience.",
+      "user_id": "sam-strategist"
+    },
+    {
+      "id": "link3",
+      "source": "analysis-civic-engagement",
+      "target": "idea-carbon-dividend",
+      "relationship": "supports",
+      "weight": 0.45,
+      "description": "Narrative campaigns build support for policy innovation.",
+      "user_id": "alex-analyst"
+    },
+    {
+      "id": "link4",
+      "source": "analysis-civic-engagement",
+      "target": "idea-resilient-grids",
+      "relationship": "relates",
+      "weight": 0.38,
+      "description": "Community stories highlight resilience planning needs.",
+      "user_id": "sam-strategist"
+    }
+  ]
+}
